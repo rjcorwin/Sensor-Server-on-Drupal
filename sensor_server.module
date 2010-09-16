@@ -1,0 +1,90 @@
+<?php
+
+include_once('sensor_server.features.inc');
+function sensor_server_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  switch ($op) {
+    case 'insert':
+    dpm('goin for it');
+      /*
+       * If a Sensor Server Poll is being inserted, we need to parse the info and save corresponding sensor data.
+       */
+      if ($node->type == 'sensor_server_data') {
+        // debug
+        // watchdog('sensorserver insert', var_export($node, true));
+        // dpm($node);
+        
+        /* 
+         * parse the reading
+         */
+        // test $data = "tempstring0 53,57,38,60,48";
+        $data = $node->body;
+        $pos  = strpos($data, ' ');
+        $sensor_server_id   = substr($data, 0, $pos);
+        $data_cd  = substr($data , $pos, strlen($data));
+        $data_arr = explode(',', $data_cd);
+        // Sensors do not yet have unique identifiers come from the Sensor Server so we assign them manually.
+	      // When we have unique id's for sensors we should also check to make sure
+        $sensor_data_all = array(
+          "sensor_1" => $data_arr[0],
+          "sensor_2" => $data_arr[1],
+          "sensor_3" => $data_arr[2],
+          "sensor_4" => $data_arr[3],
+          "sensor_5" => $data_arr[4],
+        ); 
+        
+        /*
+         * Retrieve the corresponding sensor_server node by matching $sensor_server_id to field_sensor_server_id
+         */
+        $q = " 
+          SELECT node.nid AS nid FROM node node  
+          LEFT JOIN content_type_sensor_server node_data_field_sensor_server_id 
+            ON node.vid = node_data_field_sensor_server_id.vid 
+          WHERE (node_data_field_sensor_server_id.field_sensor_server_id_value) = ('%s')
+        ";
+        $result = db_query($q, $sensor_server_id);
+        $nid = db_result($result);
+        $sensor_server_node = node_load($nid);
+        
+        /*
+         * Retrieve sensor nodes that are attached the current sensor_server. Look up sensor nodes by field_sensor_id 
+         * and only Sensors whose parent sensor_server has field_sensor_server_id that matches $sensor_server_id
+         *
+         * @todo In the future if there is a mismatch of sensor ids found in the database and sensor ids found in the poll,
+         * we should gracefully handle it. 
+         */
+        $sensor_nodes = array();
+        foreach($sensor_data_all as $sensor_id => $sensor_data) {
+          $q = "
+            SELECT node.nid AS nid 
+            FROM node node  
+            LEFT JOIN content_type_sensor node_data_field_sensor_id 
+              ON node.vid = node_data_field_sensor_id.vid 
+            INNER JOIN content_type_sensor node_data_field_sensor_to_sensor_server 
+              ON node.vid = node_data_field_sensor_to_sensor_server.vid 
+            WHERE (node.type in ('sensor')) 
+              AND ((node_data_field_sensor_id.field_sensor_id_value) = ('%s')) 
+              AND (node_data_field_sensor_to_sensor_server.field_sensor_to_sensor_server_nid = %d)
+          ";
+          $result = db_query($q, $sensor_id, $sensor_server_node->nid);
+          $sensor_nid = db_result($result);   
+          watchdog('ss', $sensor_id . ', ' . $sensor_server_node->nid . ', ' . $sensor_nid);
+          // create a new node object to save sensor reading data into
+          $sensor_reading_node = new stdClass();
+          // form the relationship from the sensor reading node to the sensor node
+          $sensor_reading_node->field_sensor_reading_to_sensor = array( 0 => array( 'nid' => $sensor_nid));
+          // save the sensor data from the SensorServer Poll
+          $sensor_reading_node->body = $sensor_data;
+          // set the time correctly on the reading as it actually happened in the past
+          $sensor_reading_node->created = $node->created;
+          // cruft? $sensor_reading_node->field_sensorserver_poll_timestam = $node->created;
+          // give the Sensor Reading a title
+          $sensor_reading_node->title = $sensor_server_id . " : " . $sensor_id . " : " . $node->created;
+          // save the new Sensor Reading
+          $sensor_reading_node->type = 'sensor_reading';
+          node_save($sensor_reading_node);
+          dpm($sensor_reading_node);
+        }
+      }
+      break;
+  }
+}
