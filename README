@@ -1,0 +1,13 @@
+
+SUMMARY
+
+This module will set up data structures to represent Arduinos and sensors.  It also provides code that will parse Sensor Server Data nodes into Sensor Reading nodes.  For example, if your Arduino is emailing sensor data to a webserver, you can use the Mailhandler module to import those emails into Sensor Server nodes while the Sensor Server Module code parses the data into Sensor Reading nodes.
+
+INSTALLATION
+
+Warning: This code is set up to accept only five sensors per Arduino.  We still have to settle on a standard data format (probably JSON).  Currentlys strings need to come in similar to the following example: 
+http://www.cloacina.org/blog/2010/06/2nd-composter-finished/
+
+CREDIT
+
+This Drupal Feature module was created by R.J. Steinert (rj@rjsteinert.com) for Mathew Lippincott's Rodent Resistent Composter project (http://www.cloacina.org/blog/2010/06/2nd-composter-finished/).
