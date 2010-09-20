@@ -4,7 +4,6 @@ include_once('sensor_server.features.inc');
 function sensor_server_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
     case 'insert':
-    dpm('goin for it');
       /*
        * If a Sensor Server Poll is being inserted, we need to parse the info and save corresponding sensor data.
        */
@@ -82,7 +81,6 @@ function sensor_server_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
           // save the new Sensor Reading
           $sensor_reading_node->type = 'sensor_reading';
           node_save($sensor_reading_node);
-          dpm($sensor_reading_node);
         }
       }
       break;
