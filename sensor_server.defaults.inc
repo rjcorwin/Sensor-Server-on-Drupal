@@ -362,8 +362,72 @@ bynase
     ),
   );
 
+  // Exported field: field_sensor_server_data_process
+  $fields[] = array(
+    'field_name' => 'field_sensor_server_data_process',
+    'type_name' => 'sensor_server_data',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => 'processed',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'default_value' => array(
+        '0' => array(
+          'value' => 'processed',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Processed',
+      'weight' => '-2',
+      'description' => 'This box will be checked after this node has been processed.',
+      'type' => 'optionwidgets_onoff',
+      'module' => 'optionwidgets',
+    ),
+  );
+
   // Translatables
   array(
+    t('Processed'),
     t('Sensor ID'),
     t('Sensor Type'),
     t('Sensor reference by Sensor Node ID'),
@@ -443,5 +507,22 @@ function _sensor_server_strongarm() {
   );
 
   $export['content_extra_weights_sensor_server'] = $strongarm;
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'content_extra_weights_sensor_server_data';
+  $strongarm->value = array(
+    'title' => '-5',
+    'body_field' => '-3',
+    'revision_information' => '1',
+    'author' => '0',
+    'options' => '2',
+    'comment_settings' => '4',
+    'menu' => '-4',
+    'book' => '-1',
+    'attachments' => '3',
+  );
+
+  $export['content_extra_weights_sensor_server_data'] = $strongarm;
   return $export;
 }
