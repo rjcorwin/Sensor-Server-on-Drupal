@@ -120,7 +120,9 @@ function sensor_server_parse_sensor_server_data_node($node=NULL) {
     node_save($sensor_reading_node);
     $i++;
   }
+  // Mark this Sensor Server Data node as processed
+  $node->field_sensor_server_data_process = array( 0 => array( 'value' => 'processed'));
+  node_save($node);
+  // Return the amount of sensor reading nodes created
   return $i;
-  // @todo mark the Sensor Server Data node as processed
-  //$node->field_sensor_server_data_process = array( 0 => array( 'nid' => $sensor_nid));
 }
