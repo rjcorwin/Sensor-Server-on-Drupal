@@ -26,17 +26,13 @@ function sensor_server_cron() {
   $result = db_query($q, $sensor_server_id);
   $sensor_server_poll_count = 0;
   $sensor_reading_count = 0;
+  // parse each node
   while($nid = db_result($result)) {
     $node = node_load($nid);
     $sensor_reading_count += sensor_server_parse_sensor_server_data_node($node);
     $sensor_server_poll_count++;
   }
   watchdog('Sensor Server', 'Parsed ' . $sensor_server_poll_count . ' Sensor Server Polls and created ' . $sensor_reading_count . ' Sensor Readings.');
-  // parse each node
-  //foreach () {
-  
-  //}
-
 }
 
 function sensor_server_parse_sensor_server_data_node($node=NULL) {
@@ -108,7 +104,6 @@ function sensor_server_parse_sensor_server_data_node($node=NULL) {
     $sensor_reading_node->body = $sensor_data;
     // set the time correctly on the reading as it actually happened in the past
     $sensor_reading_node->created = $node->created;
-    // cruft? $sensor_reading_node->field_sensorserver_poll_timestam = $node->created;
     // give the Sensor Reading a title
     $sensor_reading_node->title = 'Sensor Reading from ' . $sensor_server_node->title . " : " . $sensor_id . " : " . $node->created;
     // save the new Sensor Reading
