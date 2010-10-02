@@ -1,8 +1,5 @@
 <?php
-global $yam;
-$yam = 0;
 include_once('sensor_server.features.inc');
-
 
 function sensor_server_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   switch ($op) {
@@ -12,9 +9,7 @@ function sensor_server_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         // Protect the field_sensor_server_data_process from being NULL in the database
         $node->field_sensor_server_data_process[0]['value'] = 'not processed'; 
         node_save($node);
-        // If a Sensor Server Poll is being inserted, we need to parse the info and save corresponding sensor data.
-        //sensor_server_parse_node($node);
-      }
+     }
       break;
   }
 }
